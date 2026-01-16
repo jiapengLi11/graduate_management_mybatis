@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.niuniu.mapper.StudentCourseMapper">
+
+    <!-- 结果映射：视图字段 → 实体类属性 -->
+    <resultMap id="StudentCourseDetailResultMap" type="com.niuniu.pojo.StudentCourseDetail">
+        <id property="selectId" column="select_id"/>
+        <result property="studentNo" column="student_no"/>
+        <result property="selectStatus" column="select_status"/>
+        <result property="grade" column="grade"/>
+        <result property="selectTime" column="select_time"/>
+        <result property="courseId" column="course_id"/>
+        <result property="courseNo" column="course_no"/>
+        <result property="courseName" column="course_name"/>
+        <result property="courseType" column="course_type"/>
+        <result property="credits" column="credits"/>
+        <result property="theoryHours" column="theory_hours"/>
+        <result property="practiceHours" column="practice_hours"/>
+        <result property="hoursDisplay" column="hours_display"/>
+        <result property="semesterName" column="semester_name"/>
+        <result property="semesterCode" column="semester_code"/>
+        <result property="classTime" column="class_time"/>
+        <result property="classroom" column="classroom"/>
+        <result property="teachers" column="teachers"/>
+        <result property="totalHours" column="total_hours"/>
+    </resultMap>
+
+    <!-- 根据学号查询已选课程详细信息 -->
+    <select id="selectByStudentNo" resultMap="StudentCourseDetailResultMap">
+        SELECT select_id, student_no, select_status, grade, select_time,
+               course_id, course_no, course_name, course_type, credits,
+               theory_hours, practice_hours, hours_display,
+               semester_name, semester_code, class_time, classroom,
+               teachers, total_hours
+        FROM v_student_courses_detail
+        WHERE student_no = #{studentNo}
+        ORDER BY semester_code DESC, course_no ASC
+    </select>
+
+    <!-- 根据条件查询已选课程 -->
+    <select id="selectByCondition" resultMap="StudentCourseDetailResultMap">
+        SELECT select_id, student_no, select_status, grade, select_time,
+               course_id, course_no, course_name, course_type, credits,
+               theory_hours, practice_hours, hours_display,
+               semester_name, semester_code, class_time, classroom,
+               teachers, total_hours
+        FROM v_student_courses_detail
+        <where>
+            student_no = #{studentNo}
+            <if test="semesterCode != null and semesterCode != '' and semesterCode != 'all'">
+                AND semester_code = #{semesterCode}
+            </if>
+            <if test="courseType != null and courseType != '' and courseType != 'all'">
+                AND course_type = #{courseType}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (course_name LIKE CONCAT('%', #{keyword}, '%')
+                     OR course_no LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+        ORDER BY semester_code DESC, course_no ASC
+    </select>
+
+    <!-- 分页查询已选课程 -->
+    <select id="selectByPage" resultMap="StudentCourseDetailResultMap">
+        SELECT select_id, student_no, select_status, grade, select_time,
+               course_id, course_no, course_name, course_type, credits,
+               theory_hours, practice_hours, hours_display,
+               semester_name, semester_code, class_time, classroom,
+               teachers, total_hours
+        FROM v_student_courses_detail
+        <where>
+            student_no = #{studentNo}
+            <if test="semesterCode != null and semesterCode != '' and semesterCode != 'all'">
+                AND semester_code = #{semesterCode}
+            </if>
+            <if test="courseType != null and courseType != '' and courseType != 'all'">
+                AND course_type = #{courseType}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (course_name LIKE CONCAT('%', #{keyword}, '%')
+                     OR course_no LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+        ORDER BY semester_code DESC, course_no ASC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <!-- 统计符合条件的已选课程总数 -->
+    <select id="countByCondition" resultType="int">
+        SELECT COUNT(*)
+        FROM v_student_courses_detail
+        <where>
+            student_no = #{studentNo}
+            <if test="semesterCode != null and semesterCode != '' and semesterCode != 'all'">
+                AND semester_code = #{semesterCode}
+            </if>
+            <if test="courseType != null and courseType != '' and courseType != 'all'">
+                AND course_type = #{courseType}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (course_name LIKE CONCAT('%', #{keyword}, '%')
+                     OR course_no LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+    </select>
+
+    <!-- 统计已选课程总数 -->
+    <select id="countByStudentNo" resultType="int">
+        SELECT COUNT(*)
+        FROM student_courses
+        WHERE student_no = #{studentNo}
+    </select>
+
+    <!-- 统计已修学分总数 -->
+    <select id="sumCreditsByStudentNo" resultType="java.lang.Double">
+        SELECT COALESCE(SUM(c.credits), 0)
+        FROM student_courses sc
+        INNER JOIN courses c ON sc.course_id = c.id
+        WHERE sc.student_no = #{studentNo}
+          AND sc.status IN ('已修读', '已结课')
+    </select>
+
+    <!-- 统计平均学时 -->
+    <select id="avgHoursByStudentNo" resultType="java.lang.Double">
+        SELECT COALESCE(AVG(c.theory_hours + c.practice_hours), 0)
+        FROM student_courses sc
+        INNER JOIN courses c ON sc.course_id = c.id
+        WHERE sc.student_no = #{studentNo}
+    </select>
+
+    <!-- 统计已修读课程数 -->
+    <select id="countCompletedCourses" resultType="int">
+        SELECT COUNT(*)
+        FROM student_courses
+        WHERE student_no = #{studentNo}
+          AND status IN ('已修读', '已结课')
+    </select>
+
+    <!-- 统计待修读课程数 -->
+    <select id="countPendingCourses" resultType="int">
+        SELECT COUNT(*)
+        FROM student_courses
+        WHERE student_no = #{studentNo}
+          AND status = '待修读'
+    </select>
+
+</mapper>
+

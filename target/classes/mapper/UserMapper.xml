@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.niuniu.mapper.UserMapper">
+
+    <!-- 结果映射：实体类属性 → 数据库实际字段名 -->
+    <resultMap id="UserResultMap" type="com.niuniu.pojo.User">
+        <id property="id" column="id"/>
+        <result property="username" column="user_account"/>
+        <result property="studentId" column="student_no"/>
+        <result property="name" column="real_name"/>
+        <result property="age" column="age"/>
+        <result property="gender" column="gender"/>
+        <result property="email" column="email"/>
+        <result property="phone" column="phone"/>
+        <result property="major" column="major"/>
+        <result property="advisor" column="advisor"/>
+        <result property="grade" column="grade"/>
+        <result property="status" column="study_status"/>
+        <result property="enrollmentDate" column="enroll_date"/>
+        <result property="expectedGraduation" column="graduate_date"/>
+        <result property="gpa" column="gpa"/>
+        <result property="updateTime" column="record_create_time"/>
+    </resultMap>
+
+    <!-- 查询所有用户：SQL字段为数据库实际字段 -->
+    <select id="selectAll" resultMap="UserResultMap">
+        SELECT
+            id, user_account, student_no, real_name, age, gender, email, phone,
+            major, advisor, grade, study_status, enroll_date,
+            graduate_date, gpa, record_create_time
+        FROM user
+        ORDER BY id ASC
+    </select>
+
+    <!-- 根据ID查询用户：SQL字段为数据库实际字段 -->
+    <select id="selectById" resultMap="UserResultMap">
+        SELECT
+            id, user_account, student_no, real_name, age, gender, email, phone,
+            major, advisor, grade, study_status, enroll_date,
+            graduate_date, gpa, record_create_time
+        FROM user
+        WHERE id = #{id}
+    </select>
+
+    <!-- 根据学号查询用户：SQL字段为数据库实际字段，条件用数据库字段student_no -->
+    <select id="selectByStudentId" resultMap="UserResultMap">
+        SELECT
+            id, user_account, student_no, real_name, age, gender, email, phone,
+            major, advisor, grade, study_status, enroll_date,
+            graduate_date, gpa, record_create_time
+        FROM user
+        WHERE student_no = #{studentId}
+    </select>
+
+    <!-- 插入用户：INSERT字段为数据库实际字段，VALUES为实体类属性 -->
+    <insert id="insert" parameterType="com.niuniu.pojo.User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user (
+            user_account, student_no, real_name, age, gender, email, phone,
+            major, advisor, grade, study_status, enroll_date,
+            graduate_date, gpa, record_create_time
+        ) VALUES (
+                     #{username}, #{studentId}, #{name}, #{age}, #{gender}, #{email}, #{phone},
+                     #{major}, #{advisor}, #{grade}, #{status}, #{enrollmentDate},
+                     #{expectedGraduation}, #{gpa}, #{updateTime}
+                 )
+    </insert>
+
+    <!-- 更新用户：SET字段为数据库实际字段，值为实体类属性 -->
+    <update id="update" parameterType="com.niuniu.pojo.User">
+        UPDATE user SET
+                        user_account = #{username},
+                        student_no = #{studentId},
+                        real_name = #{name},
+                        age = #{age},
+                        gender = #{gender},
+                        email = #{email},
+                        phone = #{phone},
+                        major = #{major},
+                        advisor = #{advisor},
+                        grade = #{grade},
+                        study_status = #{status},
+                        enroll_date = #{enrollmentDate},
+                        graduate_date = #{expectedGraduation},
+                        gpa = #{gpa},
+                        record_create_time = #{updateTime}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据ID删除用户：无需修改（仅用主键id） -->
+    <delete id="deleteById">
+        DELETE FROM user WHERE id = #{id}
+    </delete>
+
+    <!-- 根据条件查询用户：SQL字段和条件均使用数据库实际字段 -->
+    <select id="selectByCondition" resultMap="UserResultMap">
+        SELECT
+        id, user_account, student_no, real_name, age, gender, email, phone,
+        major, advisor, grade, study_status, enroll_date,
+        graduate_date, gpa, record_create_time
+        FROM user
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (
+                real_name LIKE CONCAT('%', #{keyword}, '%')
+                OR student_no LIKE CONCAT('%', #{keyword}, '%')
+                OR major LIKE CONCAT('%', #{keyword}, '%')
+                OR advisor LIKE CONCAT('%', #{keyword}, '%')
+                OR user_account LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+            <if test="major != null and major != '' and major != 'all'">
+                AND major = #{major}
+            </if>
+            <if test="grade != null and grade != '' and grade != 'all'">
+                AND grade = #{grade}
+            </if>
+        </where>
+        ORDER BY id ASC
+    </select>
+
+    <!-- 分页查询用户 -->
+    <select id="selectByPage" resultMap="UserResultMap">
+        SELECT
+        id, user_account, student_no, real_name, age, gender, email, phone,
+        major, advisor, grade, study_status, enroll_date,
+        graduate_date, gpa, record_create_time
+        FROM user
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (
+                real_name LIKE CONCAT('%', #{keyword}, '%')
+                OR student_no LIKE CONCAT('%', #{keyword}, '%')
+                OR major LIKE CONCAT('%', #{keyword}, '%')
+                OR advisor LIKE CONCAT('%', #{keyword}, '%')
+                OR user_account LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+            <if test="major != null and major != '' and major != 'all'">
+                AND major = #{major}
+            </if>
+            <if test="grade != null and grade != '' and grade != 'all'">
+                AND grade = #{grade}
+            </if>
+        </where>
+        ORDER BY id ASC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <!-- 统计符合条件的用户总数 -->
+    <select id="countByCondition" resultType="int">
+        SELECT COUNT(*)
+        FROM user
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (
+                real_name LIKE CONCAT('%', #{keyword}, '%')
+                OR student_no LIKE CONCAT('%', #{keyword}, '%')
+                OR major LIKE CONCAT('%', #{keyword}, '%')
+                OR advisor LIKE CONCAT('%', #{keyword}, '%')
+                OR user_account LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+            <if test="major != null and major != '' and major != 'all'">
+                AND major = #{major}
+            </if>
+            <if test="grade != null and grade != '' and grade != 'all'">
+                AND grade = #{grade}
+            </if>
+        </where>
+    </select>
+
+</mapper>
+
