@@ -1,22 +1,30 @@
 # Graduate Management MyBatis
 
-This repository is a Spring Boot + MyBatis practice project for graduate or course-management related data handling.
+## Overview
 
-Compared with the simpler `graduate_management` project, this version includes database configuration, mapper interfaces, MyBatis XML files, and a richer set of domain objects.
+This repository is a Spring Boot + MyBatis practice project for graduate or course-management related data handling. Compared with the simpler `graduate_management` project, this version includes mapper interfaces, MyBatis XML files, SQL resources, and richer domain models.
 
-## Included
+## Tech Stack
+
+- Java
+- Spring Boot
+- MyBatis
+- MySQL
+- Maven
+
+## Project Structure
 
 - `pom.xml`: Maven configuration
-- `src/main/java/com/niuniu/`: application code
+- `src/main/java/com/niuniu/`: application source code
 - `src/main/resources/application.yml`: Spring Boot and database configuration
 - `src/main/resources/mapper/`: MyBatis mapper XML files
-- `src/main/resources/sql/`: SQL-related resources
+- `src/main/resources/sql/`: SQL resources
 - `API接口文档.md`: API notes
 - `数据库设计说明.md`: database design notes
 
 ## Current Domain Objects
 
-The `pojo` package currently includes classes such as:
+The `pojo` package includes classes such as:
 
 - `User`
 - `Teacher`
@@ -30,26 +38,6 @@ The mapper package includes:
 - `UserMapper`
 - `SemesterMapper`
 - `StudentCourseMapper`
-
-## Tech Stack
-
-- Java
-- Spring Boot
-- MyBatis
-- MySQL
-- Maven
-
-## Configuration
-
-The current `application.yml` uses a local MySQL database like this:
-
-```yaml
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/db02
-```
-
-Before running locally, update the database URL, username, and password to match your environment.
 
 ## Build
 
@@ -65,6 +53,6 @@ mvn spring-boot:run
 
 ## Notes
 
-- This repository already contains API and database design documents, which makes it easier to continue refining.
-- The `target/` directory is currently committed, so the repository still includes some build artifacts.
-- A good next step would be adding example SQL initialization scripts and a short request/response demo.
+- The current `application.yml` points to a local MySQL instance and should be adjusted before running elsewhere.
+- The repository still includes `.idea/` and `target/` artifacts from local development.
+- It already contains API and database documents, which makes it a good candidate for further cleanup and polishing.
