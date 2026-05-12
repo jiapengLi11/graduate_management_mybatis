@@ -1,16 +1,20 @@
 # Graduate Management MyBatis
 
+![Java](https://img.shields.io/badge/Java-Spring%20Boot-orange)
+![MyBatis](https://img.shields.io/badge/ORM-MyBatis-blue)
+![MySQL](https://img.shields.io/badge/Database-MySQL-4479a1)
+![Type](https://img.shields.io/badge/Project-Course%20Management-green)
+
 ## Overview
 
 This repository is a Spring Boot + MyBatis practice project for graduate or course-management related data handling. Compared with the simpler `graduate_management` project, this version includes mapper interfaces, MyBatis XML files, SQL resources, and richer domain models.
 
-## Tech Stack
+## Highlights
 
-- Java
-- Spring Boot
-- MyBatis
-- MySQL
-- Maven
+- Spring Boot + MyBatis backend structure
+- domain objects for users, teachers, courses, semesters, and student-course relations
+- bundled API notes and database design documents
+- static HTML pages included in the project
 
 ## Project Structure
 
@@ -21,23 +25,6 @@ This repository is a Spring Boot + MyBatis practice project for graduate or cour
 - `src/main/resources/sql/`: SQL resources
 - `API接口文档.md`: API notes
 - `数据库设计说明.md`: database design notes
-
-## Current Domain Objects
-
-The `pojo` package includes classes such as:
-
-- `User`
-- `Teacher`
-- `Course`
-- `Semester`
-- `StudentCourse`
-- `StudentCourseDetail`
-
-The mapper package includes:
-
-- `UserMapper`
-- `SemesterMapper`
-- `StudentCourseMapper`
 
 ## Build
 
@@ -55,4 +42,3 @@ mvn spring-boot:run
 
 - The current `application.yml` points to a local MySQL instance and should be adjusted before running elsewhere.
 - The repository still includes `.idea/` and `target/` artifacts from local development.
-- It already contains API and database documents, which makes it a good candidate for further cleanup and polishing.
